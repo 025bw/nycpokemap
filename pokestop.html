@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
+  <title>NYCPokeMap.com - Real-time Pokémon Go map for NYC</title>
+  <link rel="stylesheet" href="css/style.css?ver666" type="text/css" media="screen">
+  <meta property="og:title" content="NYCPokeMap.com - Real-time Pokémon Go Pokéstop map for NYC" />
+  <meta property="og:url" content="http://nycpokemap.com" />
+  <meta property="og:image" content="http://nycpokemap.com/images/fb_icon7.png" />
+  
+  <script type="text/javascript">
+  
+  if (top != self) {
+  	top.location.replace(document.location);
+  }
+
+  var shouldRedirect = false;
+
+  if (document.location.hostname != 'nycpokemap.com' || document.location.protocol != 'https:') {
+    shouldRedirect = true;
+  }
+
+  // testing
+  if (document.location.hostname == 'localhost' || document.location.hostname == 'test.nycpokemap.com') {
+    shouldRedirect = false;
+  }
+
+  if (shouldRedirect) {
+    document.location= 'https://nycpokemap.com/pokestop.html';
+  }
+
+  window.mobilecheck = function() {
+    return (window.innerWidth < 700 || window.innerHeight < 400);
+  }
+  
+  var ads_blocked = false;
+  if (document.location.hostname == 'localhost' || document.location.hostname == 'test.nycpokemap.com') {
+    ads_blocked = true;
+  }
+  
+  var is_mobile = window.mobilecheck();
+  var ads_width, ads_height;
+  var google_ad_client = "ca-pub-8751005170733290";
+  var google_ad_slot_top, google_ad_slot_bottom;
+  var should_show_ads_top, should_show_ads_bottom;
+  if (is_mobile) {
+    ads_width = 320;
+    ads_height = 50;
+    
+    if (Math.random() < 0.5) {
+      google_ad_slot_top = '6643881361';
+      google_ad_slot_bottom = '5167148168';
+    }
+    else {
+      google_ad_slot_top = '5167148168';
+      google_ad_slot_bottom = '6643881361';
+    }
+    
+    should_show_ads_top = true;
+    should_show_ads_bottom = true;
+    
+    if (Math.random() < 0) {
+      ads_height = 100;
+      google_ad_slot_bottom = '2074080964';
+      should_show_ads_top = false;
+    }
+  }
+  else {
+    ads_width = 728;
+    ads_height = 90;
+    google_ad_slot_top = '9736948564';
+    google_ad_slot_bottom = '3690414961';
+    
+    if (window.innerHeight >= 600) {
+      should_show_ads_top = true;
+      should_show_ads_bottom = true;
+    }
+    else {
+      should_show_ads_top = false;
+      should_show_ads_bottom = true;
+    }
+  }
+  
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.1.0/leaflet.css" />
+  <link rel="stylesheet" href="css/toastr.css?ver666" />
+  <script src="script.php"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.1.0/leaflet.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" type="text/javascript" charset="utf-8"></script>
+  
+  <meta property="og:description" content='Real testimony: "Ever since I caught that Dragonite with the help of nycpokemap.com, I can destroy any gyms I want."' />
+</head>
+<body>
+  <img src="images/check.png" style="display:none;">
+  <img src="images/off.png" style="display:none;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <div id="topbar">
+    <a href="index.html" id="home" class="toplink">Home</a>
+    <a href="gym.html" id="home" class="toplink" >Raid</a>
+    <a href="quest.html" class="toplink">Quest</a>
+		<a href="#" class="toplink" style="color: #f08b28;">Pokéstop</a>
+    <a href="#filter" id="filter_link" class="toplink">Filter</a>
+    <a href="faq.html" class="toplink">FAQs</a>
+    <a href="donate.html" class="toplink" style="color: #f08b28;">Donate</a>
+		<a href="/discord" id="discord" class="toplink" target="_blank"><img src='images/discord_icon.png'></a>
+  </div>
+  <div id="filter">
+    <div id="close">
+      <a id="close_btn"><img src="images/close.png" /></a>
+    </div>
+		<div id="filter_list_top">
+			Show grunt types:
+			<br /><br />
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_giovanni" type="checkbox" name="raid" value="giovanni"><label for="checkbox_invasion_giovanni"><img src="images/pokestop/type_giovanni.png?ver666" style="max-height: 20px"> Giovanni</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_arlo" type="checkbox" name="raid" value="arlo"><label for="checkbox_invasion_arlo"><img src="images/pokestop/type_arlo.png?ver666" style="max-height: 20px"> Arlo</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_cliff" type="checkbox" name="raid" value="cliff"><label for="checkbox_invasion_cliff"><img src="images/pokestop/type_cliff.png?ver666" style="max-height: 20px"> Cliff</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_sierra" type="checkbox" name="raid" value="sierra"><label for="checkbox_invasion_sierra"><img src="images/pokestop/type_sierra.png?ver666" style="max-height: 20px"> Sierra</label>
+			</div>
+      <div class="filter_checkbox">
+				<input id="checkbox_invasion_npc" type="checkbox" name="raid" value="npc"><label for="checkbox_invasion_npc"><img src="images/pokestop/type_npc.png?ver666" style="max-height: 20px"> NPC</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_grunt" type="checkbox" name="raid" value="grunt"><label for="checkbox_invasion_grunt"><img src="images/pokestop/type_grunt.png?ver666" style="max-height: 20px"> Grunt</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_bug" type="checkbox" name="raid" value="bug"><label for="checkbox_invasion_bug"><img src="images/pokestop/type_bug.png?ver666" style="max-height: 20px"> Bug</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_dark" type="checkbox" name="raid" value="dark"><label for="checkbox_invasion_dark"><img src="images/pokestop/type_dark.png?ver666" style="max-height: 20px"> Dark</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_dragon" type="checkbox" name="raid" value="dragon"><label for="checkbox_invasion_dragon"><img src="images/pokestop/type_dragon.png?ver666" style="max-height: 20px"> Dragon</label>
+			</div>
+			<!-- <div class="filter_checkbox">
+				<input id="checkbox_invasion_electric" type="checkbox" name="raid" value="electric"><label for="checkbox_invasion_electric"><img src="images/pokestop/type_electric.png?ver666" style="max-height: 20px"> Electric</label>
+			</div> -->
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_fairy" type="checkbox" name="raid" value="fairy"><label for="checkbox_invasion_fairy"><img src="images/pokestop/type_fairy.png?ver666" style="max-height: 20px"> Fairy</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_fighting" type="checkbox" name="raid" value="fighting"><label for="checkbox_invasion_fighting"><img src="images/pokestop/type_fighting.png?ver666" style="max-height: 20px"> Fighting</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_fire" type="checkbox" name="raid" value="fire"><label for="checkbox_invasion_fire"><img src="images/pokestop/type_fire.png?ver666" style="max-height: 20px"> Fire</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_flying" type="checkbox" name="raid" value="flying"><label for="checkbox_invasion_flying"><img src="images/pokestop/type_flying.png?ver666" style="max-height: 20px"> Flying</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_ghost" type="checkbox" name="raid" value="ghost"><label for="checkbox_invasion_ghost"><img src="images/pokestop/type_ghost.png?ver666" style="max-height: 20px"> Ghost</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_grass" type="checkbox" name="raid" value="grass"><label for="checkbox_invasion_grass"><img src="images/pokestop/type_grass.png?ver666" style="max-height: 20px"> Grass</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_ground" type="checkbox" name="raid" value="ground"><label for="checkbox_invasion_ground"><img src="images/pokestop/type_ground.png?ver666" style="max-height: 20px"> Ground</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_ice" type="checkbox" name="raid" value="ice"><label for="checkbox_invasion_ice"><img src="images/pokestop/type_ice.png?ver666" style="max-height: 20px"> Ice</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_normal" type="checkbox" name="raid" value="normal"><label for="checkbox_invasion_normal"><img src="images/pokestop/type_normal.png?ver666" style="max-height: 20px"> Normal</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_poison" type="checkbox" name="raid" value="poison"><label for="checkbox_invasion_poison"><img src="images/pokestop/type_poison.png?ver666" style="max-height: 20px"> Poison</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_psychic" type="checkbox" name="raid" value="psychic"><label for="checkbox_invasion_psychic"><img src="images/pokestop/type_psychic.png?ver666" style="max-height: 20px"> Psychic</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_rock" type="checkbox" name="raid" value="rock"><label for="checkbox_invasion_rock"><img src="images/pokestop/type_rock.png?ver666" style="max-height: 20px"> Rock</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_metal" type="checkbox" name="raid" value="metal"><label for="checkbox_invasion_metal"><img src="images/pokestop/type_steel.png?ver666" style="max-height: 20px"> Steel</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_water" type="checkbox" name="raid" value="water"><label for="checkbox_invasion_water"><img src="images/pokestop/type_water.png?ver666" style="max-height: 20px"> Water</label>
+			</div>
+			<div class="filter_checkbox">
+				<input id="checkbox_invasion_electric" type="checkbox" name="raid" value="electric"><label for="checkbox_invasion_electric"><img src="images/pokestop/type_electric.png?ver666" style="max-height: 20px"> Electric</label>
+			</div>
+		 </div>
+  </div>
+  <div id="map"></div>
+  <div id="filter_settings">
+    <div id="filter_settings_center">
+      <a href="faq.html#filter_off">Filter On</a>
+    </div>
+  </div>
+  <div id="locate">
+    <input id="locate_input" type="image" src='images/locate2.png' onclick="locateMeButton(); $('#locate_input').blur();">
+  </div>
+  <div class="please" id="please_top">
+    <div class="please_inside" style="display: block">
+      <script>
+        if (!ads_blocked && should_show_ads_top) { 
+          var filename = 'https://goraidparty.com/images/ad_banner--desktop@3x.png';
+          if (is_mobile) {
+            filename = 'https://goraidparty.com/images/ad_banner@3x.png';
+          }
+          document.write (
+            '<a href="https://goraidparty.com" target="_blank"><img src="' + filename + '" /></a>'
+          );
+        }
+      </script>
+    </div>
+  </div>
+  <div class="please" id="please_bottom">
+    <div class="please_inside" style="display:block">
+        
+      <script>
+      if (!ads_blocked && should_show_ads_bottom) { 
+        document.write (
+          '<ins class="adsbygoogle" style="display:inline-block;width:' 
+          + ads_width + 'px;height:' 
+          + ads_height + 'px" data-ad-client="' 
+          + google_ad_client + '" data-ad-slot="' 
+          + google_ad_slot_bottom + '"></ins>'
+        );        
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      }
+      </script>
+    </div>
+  </div>
+  <!-- <div id="ad_notice">
+    Advertisement
+  </div> -->
+  
+  <div id="overlay">
+    <div id="overlay_background">
+      
+    </div>
+    <div id="ask_donation">
+      This tracker relies on donations and ads to pay for operation cost. If you find it useful, please consider donating. Thank you.
+      <br />
+      <br />
+      <div id="donate_button"><a href="donate" target="_blank">Donate</a></div>
+      <div id="close_donation_button"><a href="#close">No thanks</a></div>
+    </div>
+  </div>
+  <script src="js/script_pokestop.js"></script>
+  <script>  
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-82956601-1', 'auto');
+  ga('send', 'pageview');
+  
+  var top_bar_height = 44;
+  
+  var map_top = top_bar_height;
+  
+  var button_top = 44 + 10;
+  
+  var filter_deselect_top = 114;
+  var filter_select_top = 154;
+  
+  if (should_show_ads_top) {
+    map_top += ads_height;
+    button_top += ads_height;
+    filter_select_top += ads_height;
+    filter_deselect_top += ads_height;
+  }
+  
+  
+  var map_bottom = 0;
+  if (should_show_ads_bottom) {
+    map_bottom += ads_height;
+    // if (is_mobile) {
+    //   map_bottom += 20;
+    //   $("#ad_notice").show();
+    //   $("#ad_notice").css('height', '20px');
+    //   $("#ad_notice").css('line-height', '20px');
+    //   $("#ad_notice").css('bottom', '50px');
+    // }
+  }
+  
+  var filter_top = map_top + 10;
+  var filter_bottom = map_bottom + 10;
+  
+  $('#deselect_all_btn').css('top', '' + filter_deselect_top + 'px');
+  $('#select_all_btn').css('top', '' + filter_select_top + 'px');
+  
+  $('#map').css('top', ''+  map_top + 'px');
+  $('#map').css('bottom', ''+ map_bottom +'px');
+  
+  $('#filter').css('top', ''+  filter_top + 'px');
+  $('#filter').css('bottom', ''+ filter_bottom +'px');
+  
+  $('#please_top').css('height', '' + ads_height + 'px');
+  $('#please_top .please_inside').css('height', '' + ads_height + 'px');
+  $('#please_top .please_inside').css('width', '' + ads_width + 'px');
+  $('#please_top .please_inside img').css('height', '' + ads_height + 'px');
+  $('#please_top .please_inside img').css('width', '' + ads_width + 'px');
+  
+  $('#please_bottom').css('height', '' + ads_height + 'px');
+  $('#please_bottom .please_inside').css('height', '' + ads_height + 'px');
+  $('#please_bottom .please_inside').css('width', '' + ads_width + 'px');
+  $('#please_bottom .please_inside img').css('height', '' + (ads_height) + 'px');
+  $('#please_bottom .please_inside img').css('width', '' + ads_width + 'px');
+  
+  $('#locate').css('top', '' + button_top + 'px');
+  $('#filter_settings').css('top', '' + button_top + 'px');
+  
+  initMap();
+  </script>
+</body>
+</html>
